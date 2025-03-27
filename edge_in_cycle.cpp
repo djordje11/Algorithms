@@ -2,7 +2,6 @@
 #include <vector>
 #include <iostream>
 
-
 // in undirected graph checks if edges is in some cicle
 // in_cycle[i] true if edge with num i is in cycle
 
@@ -12,16 +11,13 @@ using namespace std;
 #define M_MAX 100001
 
 int t_in[N_MAX];
-bool in_path[N_MAX];
 bool visited[N_MAX];
 bool in_cycle[M_MAX];
-
 int tme = 1;
 
 int dfs(int curr, int parr, vector<vector<pair<int, int>>>& graph)
 {
     t_in[curr] = tme++;
-    in_path[curr] = true;
     visited[curr] = true;
     int min_t_in = INT32_MAX;
 
@@ -41,8 +37,8 @@ int dfs(int curr, int parr, vector<vector<pair<int, int>>>& graph)
             if(t_in[it.first] < min_t_in)
             {
                 min_t_in = t_in[it.first];
-                in_cycle[it.second] = true;
             }
+            in_cycle[it.second] = true;
         }
     } 
     return min_t_in;
@@ -62,14 +58,11 @@ int main()
         graph[y].push_back({x, i});
     }
 
-
     dfs(1, 0, graph);
 
     for(int i = 0 ; i<m; i++)
         cout << in_cycle[i] << " ";
-
+    
     cout << endl;
-
-
     return 0;
 }
