@@ -1,0 +1,9 @@
+dinic_v2.cpp
+
+tested on:
+https://cses.fi/problemset/task/1694/
+https://codeforces.com/contest/653/problem/D
+
+implementation:
+in regular dinic algorithm(dinic_v1) after push phase rebalance is called for one active vertex which is last in topologicaly sorted level graph(last active vertex for which push was called).
+in dinic_v2 rebalance phase is called for each vertex v which has dist(1, v) == dist(1, x) where x is last in topologicaly sorted level graph.

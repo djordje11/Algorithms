@@ -1,3 +1,0 @@
-tested on:
-https://cses.fi/problemset/task/1694/
-https://codeforces.com/contest/653/problem/D
