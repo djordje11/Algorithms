@@ -13,10 +13,29 @@ int t_in[2*100000 + 1];
 int t_out[2*100000 + 1];
 int tme = 0;
 int depth[2*100000 + 1] = {-1};
-int mst[2*100000 + 1];
+bool mst[2*100000 + 1];
 int mst_connects[2*100000 + 1][2];
 int weights[2*100000 + 1];
+void dfs(int curr, int parr, vector<vector<pair<int,int>>>& graph, int w)
+{
+    dp[0][curr] = parr;
+    dp_max[0][curr] = w;
+    depth[curr] = 1 + depth[parr];
+    t_in[curr] = tme++;
+    for(auto it : graph[curr])
+    {
+        if(it.first != parr)
+        {
+            dfs(it.first, curr, graph, it.second);
+        }
+    } 
+    t_out[curr] = tme++;
+}
 
+bool is_ancestor(int u, int v)
+{
+    return t_in[v] > t_in[u] && t_out[v] < t_out[u];
+}
 
 int find_parent(int node)
 {
@@ -38,93 +57,94 @@ bool union_set(int x, int y)
 
 int main()
 {
-    //std::set<pair<int, vector<int>>> edges_sorted;
+    std::set<pair<int, vector<int>>> edges_sorted;
     
-    std::map<int, vector<int>> edges_sorted;
     int n, m;
     cin >> n >> m;
-
+    vector<vector<pair<int, int>>> graph(n+1);
     for(int i = 0; i < m; i++)
     {
         int x, y, w;
         cin >> x >> y >> w;
 
-        auto it = edges_sorted.find(w);
-        if(it == edges_sorted.end())
-        {
-            edges_sorted.insert({w, {i}});
-        }
-        else 
-        {
-            it->second.push_back(i);
-        }
-
+        edges_sorted.insert({w, {x, y, i}});
+        weights[i] = w;
         mst_connects[i][0] = x;
         mst_connects[i][1] = y;
     }
 
+    int edges_added = 0; 
     unsigned long long mst_weight = 0;
 
     for(auto it : edges_sorted)
     {
-        map<pair<int, int>, vector<int>> count;
-        for(auto jt : it.second)
+        if(union_set(it.second[0], it.second[1]))
         {
-            int x = find_parent(mst_connects[jt][0]);
-            int y = find_parent(mst_connects[jt][1]);
-
-            if(x > y)
-                swap(x, y);
-
-            if(x == y)
-            {
-                // None
-                mst[jt] = 1;
-            }
-            else 
-            {
-                auto zt = count.find({x, y});
-                if(zt == count.end())
-                {
-                    count.insert({{x, y}, {jt}});
-                }
-                else 
-                {
-                    zt->second.push_back(jt);
-                }
-
-            }
+            edges_added++;
+            mst_weight += ull(it.first);
+            graph[it.second[0]].push_back({it.second[1], it.first});
+            graph[it.second[1]].push_back({it.second[0], it.first});
+            mst[it.second[2]] = true;
         }
-        
-        for(auto jt : count)
-        {
-            bool any = jt.second.size() > 1;
-            if(any)
-            for(auto zt : jt.second)
-            {
-                mst[zt] = 2;
-            }
-        }
-
-        for(auto jt : it.second)
-        {
-            int x = find_parent(mst_connects[jt][0]);
-            int y = find_parent(mst_connects[jt][1]);
-
-            union_set(x, y);
-        }
+        if(edges_added == n-1)
+            break;
     }
 
+    dfs(1, 0, graph, 0);
+
+
+    for(int i = 1; i <= 20; i++)
+        for(int j = 1; j <= n; j++)
+            dp[i][j] = dp[i-1][dp[i-1][j]];
+    for(int i = 1; i <= 20; i++)
+        for(int j = 1; j <= n; j++)
+            dp_max[i][j] = std::max(dp_max[i-1][j], dp_max[i-1][dp[i-1][j]]);
+    
 
     for(int i = 0; i < m; i++)
-    if(mst[i] == 0)cout << "any" << endl;
-    else if(mst[i] == 1)
-        cout << "none" << endl;
-    else
-        cout << "at least one" << endl;
-        
- 
-    cout << endl;
+    {
+
+        if(mst[i])
+        {
+            cout << mst_weight << " ";
+            continue;
+        }
+        int max1 = 0;
+        int x = mst_connects[i][0];
+        int y = mst_connects[i][1];
+
+        if(is_ancestor(y, x))
+        {
+            swap(x, y);
+        }
+        if(!is_ancestor(x, y))
+        {
+            for(int i = 20; i >= 0; i--)
+            {
+                if(dp[i][x] != 0 && !is_ancestor(dp[i][x], y))
+                {
+                    max1 = std::max(max1, dp_max[i][x]);
+                    x = dp[i][x];
+                }
+            }
+            max1 = std::max(max1, dp_max[0][x]);
+            x = dp[0][x];
+        }
+
+        for(int i = 20; i >= 0; i--)
+        {
+            if(dp[i][y] != 0 && !is_ancestor(dp[i][y], x) && dp[i][y] != x)
+            {
+                max1 = std::max(max1, dp_max[i][y]);
+                y = dp[i][y];
+            }
+        }
+        max1 = std::max(max1, dp_max[0][y]);
+
+
+        cout << mst_weight + weights[i] - max1 << " ";
+    }
+
 
     return 0;
 }
