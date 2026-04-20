@@ -34,16 +34,10 @@ void dfs(int curr,int par, vector<vector<int>>& graph, int curr_level)
                 can = false;
                 break;
             }
-            h[curr] = min(h[curr], h[it]);
         }
-        else 
-        {
-            h[curr] = min(h[curr], h[it]);
-        }
+        h[curr] = min(h[curr], h[it]);  
     } 
 }
-
-
 int main()
 {
     int n, m;
@@ -70,7 +64,6 @@ int main()
     {
         cout << 0 << endl;
     }
-
 
     return 0;
 }
