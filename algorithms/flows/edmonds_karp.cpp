@@ -1,4 +1,4 @@
-// max flow is in sum (graph[1][i]) where  1 <= i <= n
+// max flow is in sum (graph_reverse[i][1]) where  1 <= i <= n
 
 #include <cstdint>
 #include <iostream>
