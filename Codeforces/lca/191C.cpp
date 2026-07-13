@@ -109,15 +109,6 @@ int main()
             if(dp[i][x] != 0 && !is_ancestor(dp[i][x], y))x = dp[i][x];
         x = dp[0][x];
 
-
-
-        
-
-        if(start_x == 26163)l++; 
-        if(start_x == 93694)r++;
-
-        if(start_y == 26163)l2++; 
-        if(start_y == 93694)r2++;
         count[start_x] += 1;
         count[start_y] += 1;
 
