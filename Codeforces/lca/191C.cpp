@@ -38,19 +38,8 @@ void dfs2(int curr, int parr, vector<vector<pair<int,int>>>& graph, int id)
         {
             dfs2(it.first, curr, graph, it.second);
             all_count[curr] += all_count[it.first];
-            if(curr == 77972 && it.first == 26163)
-            {
-     //           cout << all_count[curr] << " sarke" << std::endl;
-            }
-            if(curr == 72089 && it.first == 77972)
-            {
-    //            cout << all_count[curr] << " sarke2 " << count[curr] << " " << count[it.first] << " " << all_count[it.first] << std::endl;
-            }
         }
     } 
-    if(n == 100000 && all_count[curr] != 0)
-    {
-    }
     if(parr != 0)
     {
 
